@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph UI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        #controls {
+            margin: 10px;
+        }
+        #graph-container {
+            border: 1px solid #ccc;
+            background-color: #fff;
+            margin: 20px;
+            overflow: hidden;
+            width: 800px;
+            height: 600px;
+        }
+        .node {
+            cursor: pointer;
+			stroke-width: 1px; /* 默认节点外框粗细 */
+        }
+        .node text {
+            font-size: 14px;
+            fill: #333;
+        }
+        .link {
+            stroke: black;
+            stroke-width: 2px;
+        }
+        .selected {
+            stroke: red;
+            stroke-width: 2px;
+			
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <button id="addNode">Add Node</button>
+        <button id="removeNode">Remove Node</button>
+        <button id="connectNodes">Connect Nodes</button>
+        <button id="renameNode">Rename Node</button>
+    </div>
+    <div id="graph-container"></div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="graph.js"></script>
+</body>
+</html>
