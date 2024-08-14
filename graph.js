@@ -92,7 +92,7 @@ function updateGraph() {
 
 
 function selectNode(event, d) {
-    if (event.shiftKey) { // 只在按下 shift 键时允许多选
+    if (event.shiftKey) { // only when press shift button, allow multiple selection
         d3.select(this).classed("selected", !d3.select(this).classed("selected"));
     } else {
         d3.selectAll(".node").classed("selected", false);
@@ -124,7 +124,7 @@ function connectNodes() {
             source: selectedNodes[0],
             target: selectedNodes[1]
         });
-        d3.selectAll(".node").classed("selected", false); // 取消节点的选中状态
+        d3.selectAll(".node").classed("selected", false); // cancel the node selection state
         updateGraph();
     }
 }
