@@ -5,64 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graph UI</title>
     <style>
-/* Matrix style */
-body {
-    background-color: #000000; /* black */
-    color: #00ff00; /* light green */
-    font-family: 'Courier New', Courier, monospace; /* code-style font */
-}
+		/* Matrix style */
+		body {
+			background-color: #000000; /* black */
+			color: #00ff00; /* light green */
+			font-family: 'Courier New', Courier, monospace; /* code-style font */
+		}
 
-h1 {
-    color: #00ff00; /* bright green  */
-}
+		h1 {
+			color: #00ff00; /* bright green  */
+		}
 
-button {
-    background-color: #003300; /* dark green  */
-    color: #00ff00; /* bright green */
-    border: 1px solid #00ff00; /* light green */
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin: 5px;
-}
+		button {
+			background-color: #003300; /* dark green  */
+			color: #00ff00; /* bright green */
+			border: 1px solid #00ff00; /* light green */
+			padding: 10px 20px;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 16px;
+			margin: 5px;
+		}
 
-button:hover {
-    background-color: #004d00; /* hover bgc */
-}
+		button:hover {
+			background-color: #004d00; /* hover bgc */
+		}
 
-a {
-    color: #00ff00; /* bright green */
-}
+		a {
+			color: #00ff00; /* bright green */
+		}
 
-a:hover {
-    text-decoration: underline; /* hover underline */
-}
+		a:hover {
+			text-decoration: underline; /* hover underline */
+		}
 
-/* D3 节点和边的样式 */
-.node circle {
-    stroke: #00ff00; /* bright green */
-    stroke-width: 2px;
-    fill: #003300; /* dark green */
-}
+		/* D3 节点和边的样式 */
+		.node circle {
+			stroke: #00ff00; /* bright green */
+			stroke-width: 2px;
+			fill: #003300; /* dark green */
+		}
 
-.node text {
-    fill: #00ff00; /* bright green */
-}
+		.node text {
+			fill: #00ff00; /* bright green */
+		}
 
-.link {
-    stroke: #00ff00; /* bright green */
-    stroke-width: 1.5px;
-}
+		.link {
+			stroke: #00ff00; /* bright green */
+			stroke-width: 1.5px;
+		}
+
+		/* 工具栏样式 */
+		#toolbar {
+			display: flex;
+			align-items: center;
+			background-color: #000000; /* 工具栏背景颜色 */
+			padding: 5px;
+		}
+
+		/* 工具栏中的图标文字样式 */
+		.toolbar-icon {
+			color: #00ff00; /* 图标文字颜色 */
+			font-size: 18px; /* 图标文字字体大小 */
+			font-family: 'Courier New', Courier, monospace;
+			margin-right: 15px; /* 图标文字和按钮之间的间距 */
+		}
+
+		/* 调整按钮大小 */
+		#toolbar button {
+			background-color: #003300; /* 按钮背景颜色 */
+			color: #00ff00; /* 按钮文字颜色 */
+			border: 1px solid #00ff00; /* 按钮边框颜色 */
+			padding: 5px 10px; /* 调整按钮内边距 */
+			border-radius: 3px; /* 调整按钮圆角半径 */
+			cursor: pointer;
+			font-size: 14px; /* 调整按钮文字大小 */
+			margin: 0 3px; /* 调整按钮间距 */
+		}
+
+		#toolbar button:hover {
+			background-color: #004d00; /* 按钮悬停背景颜色 */
+		}
 
     </style>
 </head>
 <body>
     <div id="controls">
-        <button id="addNode">Add Node</button>
-        <button id="removeNode">Remove Node</button>
-        <button id="connectNodes">Connect Nodes</button>
-        <button id="renameNode">Rename Node</button>
+<!-- 将按钮放入一个工具栏，并添加"KevGraph"图标 -->
+		<div id="toolbar">
+			<span class="toolbar-icon">KevGraph</span>
+			<button id="addNode">Add Node</button>
+			<button id="removeNode">Remove Node</button>
+			<button id="connectNodes">Connect Nodes</button>
+			<button id="renameNode">Rename Node</button>
+			<button id="addHyperNode">Add Hyper Node</button>
+			<button id="connectHyperNode">Connect Hyper Node</button>
+			<button id="deleteHyperNode">Delete Hyper Node</button>
+			<button id="importGraph">Import Graph</button> <!-- 新按钮 -->
+		</div>
     </div>
     <div id="graph-container"></div>
     <script src="https://d3js.org/d3.v7.min.js"></script>
