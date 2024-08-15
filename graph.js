@@ -4,27 +4,68 @@ let nodes = [];
 let links = [];
 let nodeIdCounter = 0;
 
+// 添加缩放和拖动功能
+const zoom = d3.zoom()
+    .scaleExtent([0.1, 10])  // 设置缩放范围
+    .on("zoom", function(event) {
+        svg.attr("transform", event.transform);
+    });
+
 const svg = d3.select("#graph-container")
     .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("width", window.innerWidth)
+    .attr("height", window.innerHeight)
+    .call(zoom);
 
-const linkGroup = svg.append("g")
-    .attr("class", "links");
+// 当窗口大小改变时，更新 SVG 尺寸
+window.addEventListener('resize', () => {
+    svg.attr("width", window.innerWidth)
+       .attr("height", window.innerHeight);
+});
 
-const nodeGroup = svg.append("g")
-    .attr("class", "nodes");
+// 将缩放功能应用于 SVG
+svg.call(zoom);
+
+// 添加一个容器用于包含所有图形元素
+const g = svg.append("g");
+
+// 更新 linkGroup 和 nodeGroup 为新的容器 g 的子元素
+const linkGroup = g.append("g").attr("class", "links");
+const nodeGroup = g.append("g").attr("class", "nodes");
 
 const simulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(d => d.id))
-    .force("charge", d3.forceManyBody().strength(-300))
+    .force("charge", d3.forceManyBody().strength(-100)) // 减小排斥力
     .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("collide", d3.forceCollide().radius(d => Math.max(10, d.degree * 5) + 10)) // 避免重叠
     .on("tick", ticked);
 	
 
+// 绑定 importGraph 按钮的事件
+document.getElementById('importGraph').addEventListener('click', function() {
+    const jsonInput = prompt("Enter the graph JSON data:", "{}");
+    if (jsonInput) {
+        try {
+            const graphData = JSON.parse(jsonInput);
+
+            // Validate graphData structure
+            if (Array.isArray(graphData.nodes) && Array.isArray(graphData.links)) {
+                nodes = graphData.nodes;
+                links = graphData.links;
+                updateGraph();
+            } else {
+                alert("Invalid graph data format.");
+            }
+        } catch (e) {
+            alert("Failed to parse JSON data.");
+        }
+    }
+});
+
 	
 
 
+// 添加边界约束，确保节点不会超出视图边界
 function ticked() {
     linkGroup.selectAll("line")
         .attr("x1", d => d.source.x)
@@ -33,7 +74,12 @@ function ticked() {
         .attr("y2", d => d.target.y);
 
     nodeGroup.selectAll("g")
-        .attr("transform", d => `translate(${d.x},${d.y})`);
+        .attr("transform", d => {
+            // 边界约束
+            d.x = Math.max(0, Math.min(width, d.x));
+            d.y = Math.max(0, Math.min(height, d.y));
+            return `translate(${d.x},${d.y})`;
+        });
 }
 
 function editNode(event, d) {
@@ -177,10 +223,39 @@ function selectNode(event, d) {
 
 
 function addNode() {
-    const newNode = { id: ++nodeIdCounter, name: `Node ${nodeIdCounter}` };
+    // 查找当前图形中心的位置
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    // 找到一个不与现有节点重叠的位置
+    const radius = 50; // 节点的最小距离
+    let x = centerX;
+    let y = centerY;
+    
+    // 查找一个没有与其他节点重叠的位置
+    let overlap;
+    do {
+        overlap = false;
+        nodes.forEach(node => {
+            const dx = node.x - x;
+            const dy = node.y - y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < radius) {
+                overlap = true;
+            }
+        });
+        if (overlap) {
+            x = centerX + Math.random() * 200 - 100; // 随机偏移量
+            y = centerY + Math.random() * 200 - 100;
+        }
+    } while (overlap);
+
+    // 创建新节点
+    const newNode = { id: ++nodeIdCounter, name: `Node ${nodeIdCounter}`, x, y };
     nodes.push(newNode);
     updateGraph();
 }
+
 
 function removeNode() {
     const selected = d3.select(".node.selected");
