@@ -20,6 +20,10 @@ const simulation = d3.forceSimulation(nodes)
     .force("charge", d3.forceManyBody().strength(-300))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .on("tick", ticked);
+	
+
+	
+
 
 function ticked() {
     linkGroup.selectAll("line")
@@ -31,6 +35,74 @@ function ticked() {
     nodeGroup.selectAll("g")
         .attr("transform", d => `translate(${d.x},${d.y})`);
 }
+
+function editNode(event, d) {
+    // Prevent the default click event from firing
+    event.preventDefault();
+
+    // Check if the textarea is already open
+    const isOpen = d3.select(this).select(".node-textarea").node();
+
+    // If the textarea is open, close it and restore the node size
+    if (isOpen) {
+        // Remove the textarea
+        d3.select(this).select(".node-textarea").remove();
+
+        // Restore the size of the node
+        d3.select(this).select("circle")
+            .transition()
+            .duration(250)
+            .attr("r", d => Math.max(10, d.degree * 5)); // Adjust back to original size based on degree
+
+        // Restore the text in the node to the attribute value
+        d3.select(this).select("text")
+            .text(d => d.text || d.name);
+
+        // No further action needed
+        return;
+    }
+
+    // If the textarea is not open, proceed to open it
+    d3.selectAll(".node-textarea").remove();
+
+    // Increase the size of the node
+    d3.select(this).select("circle")
+        .transition()
+        .duration(250)
+        .attr("r", 40);
+
+    // Append a textarea inside the node group
+    const textarea = d3.select(this).append("foreignObject")
+        .attr("class", "node-textarea")
+        .attr("width", 80)
+        .attr("height", 60)
+        .attr("x", -40)
+        .attr("y", -30)
+        .append("xhtml:textarea")
+        .style("width", "80px")
+        .style("height", "60px")
+        .style("background-color", "#003300")  // Dark green background
+        .style("color", "#00ff00")             // Bright green text
+        .style("border", "none")
+        .style("resize", "none")
+        .text(d.text || "")  // Use the existing text if any
+
+        // When the user finishes editing (on blur event)
+        .on("blur", function() {
+            const newText = this.value;
+            d.text = newText;  // Save the text to the node data
+            updateGraph();     // Update the graph
+        })
+        .on("click", function(event) {
+            // Prevent click event from propagating to parent node
+            event.stopPropagation();
+        });
+
+    // Automatically focus on the textarea
+    textarea.node().focus();
+}
+
+
 
 function updateGraph() {
     // Reset node degrees
@@ -54,23 +126,26 @@ function updateGraph() {
     const nodeElements = nodeGroup.selectAll("g")
         .data(nodes, d => d.id);
 
-    const nodeEnter = nodeElements.enter()
-        .append("g")
-        .attr("class", "node")
-        .call(d3.drag()
-            .on("start", dragStarted)
-            .on("drag", dragged)
-            .on("end", dragEnded))
-        .on("click", selectNode);
+	const nodeEnter = nodeElements.enter()
+		.append("g")
+		.attr("class", "node")
+		.call(d3.drag()
+			.on("start", dragStarted)
+			.on("drag", dragged)
+			.on("end", dragEnded))
+		.on("click", selectNode)
+		.on("dblclick", editNode); // Add this line to handle double-click
 
-    nodeEnter.append("circle")
-        .attr("r", d => Math.max(10, d.degree * 5)) // Adjust the radius based on degree
-        .attr("fill", "#69b3a2");
+	nodeEnter.append("circle")
+		.attr("r", d => Math.max(10, d.degree * 5, d.text ? d.text.length * 3 : 0))  // Adjust the radius based on degree and text length
+		.attr("fill", "#69b3a2");
 
-    nodeEnter.append("text")
-        .attr("dx", 25)
-        .attr("dy", 5)
-        .text(d => d.name);
+
+	nodeEnter.append("text")
+		.attr("dx", 25)
+		.attr("dy", 5)
+		.text(d => d.text || d.name);  // Use the text attribute if available
+
 
     nodeElements.exit().remove();
 
