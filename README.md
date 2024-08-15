@@ -8,4 +8,5 @@ A knowledge graph GUI
 3. Group several nodes as a hypernode and construct hyperedge(s). 
 4. Hierarchical node/edge relation.
 
-![KevGraph](https://github.com/user-attachments/assets/24bbb689-c9d0-4399-871f-ff1afc70f0ff)
+![KevGraph](https://github.com/user-attachments/assets/c9760a44-4494-4485-952f-039a8bf0dd8b)
+
