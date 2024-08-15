@@ -5,38 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graph UI</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-        }
-        #controls {
-            margin: 10px;
-        }
-        #graph-container {
-            border: 1px solid #ccc;
-            background-color: #fff;
-            margin: 20px;
-            overflow: hidden;
-            width: 800px;
-            height: 600px;
-        }
-        .node {
-            cursor: pointer;
-			stroke-width: 1px; /* default node border width */
-        }
-        .node text {
-            font-size: 14px;
-            fill: #333;
-        }
-        .link {
-            stroke: black;
-            stroke-width: 2px;
-        }
-        .selected {
-            stroke: red;
-            stroke-width: 2px;
-			
-        }
+/* Matrix style */
+body {
+    background-color: #000000; /* black */
+    color: #00ff00; /* light green */
+    font-family: 'Courier New', Courier, monospace; /* code-style font */
+}
+
+h1 {
+    color: #00ff00; /* bright green  */
+}
+
+button {
+    background-color: #003300; /* dark green  */
+    color: #00ff00; /* bright green */
+    border: 1px solid #00ff00; /* light green */
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #004d00; /* hover bgc */
+}
+
+a {
+    color: #00ff00; /* bright green */
+}
+
+a:hover {
+    text-decoration: underline; /* hover underline */
+}
+
+/* D3 节点和边的样式 */
+.node circle {
+    stroke: #00ff00; /* bright green */
+    stroke-width: 2px;
+    fill: #003300; /* dark green */
+}
+
+.node text {
+    fill: #00ff00; /* bright green */
+}
+
+.link {
+    stroke: #00ff00; /* bright green */
+    stroke-width: 1.5px;
+}
+
     </style>
 </head>
 <body>
