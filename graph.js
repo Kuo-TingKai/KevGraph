@@ -38,6 +38,8 @@ const simulation = d3.forceSimulation(nodes)
     .force("charge", d3.forceManyBody().strength(-100)) // 减小排斥力
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collide", d3.forceCollide().radius(d => Math.max(10, d.degree * 5) + 10)) // 避免重叠
+    .force("x", d3.forceX(width / 2).strength(0.1)) // 添加 x 方向的力
+    .force("y", d3.forceY(height / 2).strength(0.1)) // 添加 y 方向的力
     .on("tick", ticked);
 	
 
@@ -76,8 +78,8 @@ function ticked() {
     nodeGroup.selectAll("g")
         .attr("transform", d => {
             // 边界约束
-            d.x = Math.max(0, Math.min(width, d.x));
-            d.y = Math.max(0, Math.min(height, d.y));
+            d.x = Math.max(50, Math.min(width - 50, d.x));
+            d.y = Math.max(50, Math.min(height - 50, d.y));
             return `translate(${d.x},${d.y})`;
         });
 }
@@ -205,7 +207,7 @@ function updateGraph() {
 
     simulation.nodes(nodes);
     simulation.force("link").links(links);
-    simulation.alpha(1).restart();
+    simulation.alpha(0.3).restart(); // 降低 alpha 值，使布局变化更平缓
 }
 
 
@@ -223,37 +225,21 @@ function selectNode(event, d) {
 
 
 function addNode() {
-    // 查找当前图形中心的位置
     const centerX = width / 2;
     const centerY = height / 2;
+    const radius = 100; // 增加新节点的分布范围
 
-    // 找到一个不与现有节点重叠的位置
-    const radius = 50; // 节点的最小距离
-    let x = centerX;
-    let y = centerY;
-    
-    // 查找一个没有与其他节点重叠的位置
-    let overlap;
-    do {
-        overlap = false;
-        nodes.forEach(node => {
-            const dx = node.x - x;
-            const dy = node.y - y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance < radius) {
-                overlap = true;
-            }
-        });
-        if (overlap) {
-            x = centerX + Math.random() * 200 - 100; // 随机偏移量
-            y = centerY + Math.random() * 200 - 100;
-        }
-    } while (overlap);
+    let x = centerX + (Math.random() - 0.5) * radius * 2;
+    let y = centerY + (Math.random() - 0.5) * radius * 2;
 
-    // 创建新节点
+    // 边界约束
+    x = Math.max(50, Math.min(width - 50, x));
+    y = Math.max(50, Math.min(height - 50, y));
+
     const newNode = { id: ++nodeIdCounter, name: `Node ${nodeIdCounter}`, x, y };
     nodes.push(newNode);
     updateGraph();
+    simulation.alpha(1).restart(); // 重启模拟以重新计算布局
 }
 
 
